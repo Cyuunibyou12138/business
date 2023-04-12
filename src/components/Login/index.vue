@@ -79,7 +79,7 @@
     },
     methods:{
       test(){
-        
+        console.log(22222)
       }
     }
   }
