@@ -74,10 +74,14 @@
           phone:'',
           password:'',
           code:'',
-
         }
       }
     },
+    methods:{
+      test(){
+        
+      }
+    }
   }
 </script>
 
