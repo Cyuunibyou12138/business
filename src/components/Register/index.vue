@@ -9,12 +9,12 @@
       <div class="content">
         <label>手机号:</label>
         <input type="text" v-model="form.phone" placeholder="请输入你的手机号">
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">手机</span>
       </div>
       <div class="content">
         <label>验证码:</label>
         <input type="text" v-model="form.code" placeholder="请输入验证码">
-        <img ref="code"  alt="code">
+        <span><button @click="getCodeBtn">获取验证码</button></span>
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="content">
@@ -24,13 +24,13 @@
       </div>
       <div class="content">
         <label>确认密码:</label>
-        <input type="text" v-model="form.password2" placeholder="请输入确认密码">
-        <span class="error-msg">错误提示信息</span>
+        <input type="text" v-model="form.password2" @blur="qrmm" placeholder="请输入确认密码">
+        <span class="error-msg"  v-text="pwdMsg2"></span>
       </div>
       <div class="controls">
         <input name="m1" type="checkbox">
         <span>同意协议并注册《尚品汇用户协议》</span>
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg"></span>
       </div>
       <div class="btn">
         <button>完成注册</button>
@@ -66,18 +66,37 @@
           password:'',
           password2:'',
           code:'',
-        }
+        },
+        code:'',
+        pwdMsg2:''
       }
     },
     mounted(){
-      this.getCode()
     },
     methods:{
-      
+      // 获取验证码
       getCode(){
-        this.axios.get('/api/user/passport/sendCode/13117572920').then(res=>{
+        this.axios.get('/api/user/passport/sendCode/'+this.phone).then(res=>{
           console.log(res)
+          this.code = res.code
         })
+      },
+      // 点击获取验证码
+      getCodeBtn(){
+        let reg = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/
+        if(reg.test(this.form.phone)){
+          this.getCode()
+        }else{
+          alert('请输入正确的手机号码')
+        }
+      },
+      // 确认密码
+      qrmm(){
+        if(this.form.password!==this.form.password2){
+          this.pwdMsg2='两次密码不一致'
+        }else{
+          this.pwdMsg2=''
+        }
       }
     }
   }
@@ -115,7 +134,7 @@
       }
 
       .content {
-        padding-left: 390px;
+        // padding-left: 390px;
         margin-bottom: 18px;
         position: relative;
 
@@ -134,7 +153,9 @@
           margin-left: 5px;
           outline: none;
           border: 1px solid #999;
+          margin-bottom: 15px;
         }
+        
 
         img {
           vertical-align: sub;
@@ -142,9 +163,10 @@
 
         .error-msg {
           position: absolute;
-          top: 100%;
+          top: 90%;
           left: 495px;
           color: red;
+        
         }
       }
 
