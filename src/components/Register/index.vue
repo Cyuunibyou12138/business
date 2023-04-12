@@ -12,7 +12,7 @@
 			<div class="content">
 				<label>手机号:</label>
 				<input type="text" v-model="form.phone" @focus="phoneMsg = ''" @blur="phoneB" placeholder="请输入你的手机号" />
-				<span class="error-msg" v-text="phoneMsg"></span>
+				<span class="error-msg">{{ form.phone | phoneRule(that) }}</span>
 			</div>
 			<div class="content">
 				<label>验证码:</label>
@@ -64,7 +64,9 @@
 </template>
 
 <script>
+	
 	export default {
+		
 		name: 'Register',
 		data() {
 			return {
@@ -87,14 +89,34 @@
 					// code:  false,
 					pwd1: false,
 					pwd2: false
+				},
+				that:this
+			}
+		},
+		
+		filters: {
+			phoneRule(val,that) {
+				let reg = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/
+				if (val.trim().length === 0) {
+					that.phoneErr = true
+					that.rules.phone = false
+
+					return ''
+				}
+				if (reg.test(val)) {
+					that.phoneErr = false
+					that.rules.phone = true
+					return ''
+				} else {
+					that.rules.phone = false
+					return '手机号码格式不正确'
 				}
 			}
 		},
-		mounted() {},
 		methods: {
 			// 提交
 			submit() {
-				console.log(this.form.code==this.code)
+				console.log(this.form.code == this.code)
 				console.log(typeof this.form.code)
 				let rule = Object.values(this.rules)
 				let flag = rule.every(item => {
@@ -106,18 +128,18 @@
 				if (!this.choose) {
 					return (this.agreeMsg = '请勾选用户协议')
 				}
-				if(this.form.code.length===0){
-					return	this.codeMsg = '请填写验证码'
+				if (this.form.code.length === 0) {
+					return (this.codeMsg = '请填写验证码')
 				}
 				if (this.form.code != this.code) {
 					return (this.codeMsg = '验证码错误')
 				}
-				
+
 				this.axios({
-					url:'/api/user/passport/register',
-					method:'post',
-					data:this.form
-				}).then(res=>{
+					url: '/api/user/passport/register',
+					method: 'post',
+					data: this.form
+				}).then(res => {
 					console.log(this.form)
 					console.log(res)
 				})
@@ -152,19 +174,7 @@
 					this.pwdMsg2 = '密码必须包含三种以上符号，长度8-16位'
 				}
 			},
-			// 手机号失去焦点
-			phoneB() {
-				let reg = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/
-				console.log(reg.test(this.form.phone))
-				if (!reg.test(this.form.phone)) {
-					this.phoneMsg = '手机号码错误'
-					this.phoneErr = true
-					this.rules.phone = false
-				} else {
-					this.rules.phone = true
-					this.phoneErr = false
-				}
-			}
+			
 		}
 	}
 </script>
