@@ -11,29 +11,24 @@
 			</h3>
 			<div class="content">
 				<label>手机号:</label>
-				<input type="text" v-model="form.phone" @focus="phoneMsg = ''" @blur="phoneB" placeholder="请输入你的手机号" />
-				<span class="error-msg">{{ form.phone | phoneRule(that) }}</span>
+				<input type="text" v-model="regform.phone" @focus="phoneMsg = ''" placeholder="请输入你的手机号" />
+				<span class="error-msg">{{ regform.phone | phoneRule(that) }}</span>
 			</div>
 			<div class="content">
 				<label>验证码:</label>
-				<input type="text" v-model="form.code" placeholder="请输入验证码" />
+				<input type="text" placeholder="请输入验证码" v-model="regform.code">
 				<span><button :disabled="phoneErr" @click="getCode">获取验证码</button></span>
 				<span class="error-msg" v-text="codeMsg"></span>
 			</div>
 			<div class="content">
 				<label>登录密码:</label>
-				<input
-					type="text"
-					v-model="form.password"
-					placeholder="请输入你的登录密码"
-					@focus="pwdMsg1 = ''"
-					@blur="pwdB" />
-				<span class="error-msg" v-text="pwdMsg1"></span>
+				<input type="text" v-model="regform.password" placeholder="请输入你的登录密码" />
+				<span class="error-msg">{{ regform.password | pwd1Rule(that) }}</span>
 			</div>
 			<div class="content">
 				<label>确认密码:</label>
-				<input type="text" v-model="password2" placeholder="请输入确认密码" @focus="pwdMsg2 = ''" @blur="pwd2B" />
-				<span class="error-msg" v-text="pwdMsg2"></span>
+				<input type="text" v-model="password2" placeholder="请输入确认密码"/>
+				<span class="error-msg">{{ password2 | pwd2Rule(that) }}</span>
 			</div>
 			<div class="controls">
 				<input name="m1" type="checkbox" v-model="choose" />
@@ -64,43 +59,37 @@
 </template>
 
 <script>
-	
 	export default {
-		
 		name: 'Register',
 		data() {
 			return {
-				form: {
+				regform: {
 					phone: '13117572920',
 					password: 'Wydxb74110',
 					code: ''
 				},
 				password2: 'Wydxb74110',
 				code: '',
-				pwdMsg1: '',
 				pwdMsg2: '',
-				phoneMsg: '',
 				codeMsg: '',
 				agreeMsg: '',
 				phoneErr: true,
 				choose: false,
 				rules: {
 					phone: false,
-					// code:  false,
 					pwd1: false,
 					pwd2: false
 				},
-				that:this
+				that: this
 			}
 		},
-		
+
 		filters: {
-			phoneRule(val,that) {
+			phoneRule(val, that) {
 				let reg = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/
 				if (val.trim().length === 0) {
 					that.phoneErr = true
 					that.rules.phone = false
-
 					return ''
 				}
 				if (reg.test(val)) {
@@ -111,13 +100,37 @@
 					that.rules.phone = false
 					return '手机号码格式不正确'
 				}
+			},
+			pwd1Rule(val, that) {
+				let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+-=])[a-zA-Z\d!@#$%^&*()_+-=]{8,16}$/
+				if (reg.test(val)) {
+					that.rules.pwd1 = true
+					return ''
+				} else {
+					that.rules.pwd1 = false
+					return '密码必须包含三种以上符号，长度8-16位'
+				}
+			},
+			// 确认密码
+			pwd2Rule(val, that) {
+				let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+-=])[a-zA-Z\d!@#$%^&*()_+-=]{8,16}$/
+				if (reg.test(val)) {
+					if (val !== that.regform.password) {
+						that.rules.pwd2 = false
+						return '两次密码不一致'
+					} else {
+						that.rules.pwd2 = true
+						return '密码一致'
+					}
+				} else {
+					that.rules.pwd2 = false
+					return '密码必须包含三种以上符号，长度8-16位'
+				}
 			}
 		},
 		methods: {
 			// 提交
 			submit() {
-				console.log(this.form.code == this.code)
-				console.log(typeof this.form.code)
 				let rule = Object.values(this.rules)
 				let flag = rule.every(item => {
 					return item
@@ -128,53 +141,37 @@
 				if (!this.choose) {
 					return (this.agreeMsg = '请勾选用户协议')
 				}
-				if (this.form.code.length === 0) {
+				if (this.regform.code.length === 0) {
 					return (this.codeMsg = '请填写验证码')
 				}
-				if (this.form.code != this.code) {
+				if (this.regform.code != this.code) {
 					return (this.codeMsg = '验证码错误')
 				}
 
 				this.axios({
 					url: '/api/user/passport/register',
 					method: 'post',
-					data: this.form
+					data: this.regform
 				}).then(res => {
-					console.log(this.form)
 					console.log(res)
+					if(res.code===200){
+						this.$message.success('注册成功！')
+						setTimeout(() => {
+							this.$router.push('/login')
+						}, 2000);
+					}else{
+						this.$message.error(res.message)
+					}
 				})
 			},
 			// 获取验证码
 			getCode() {
-				this.axios.get('/api/user/passport/sendCode/' + this.phone).then(res => {
+				this.axios.get('/api/user/passport/sendCode/' + this.regform.phone).then(res => {
 					console.log(res)
 					this.code = res.data
 					alert('验证码为' + this.code)
 				})
-			},
-			pwdB() {
-				let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+-=])[a-zA-Z\d!@#$%^&*()_+-=]{8,16}$/
-				if (!reg.test(this.form.password)) {
-					this.pwdMsg1 = '密码必须包含三种以上符号，长度8-16位'
-				} else {
-					this.rules.pwd1 = true
-				}
-			},
-			// 确认密码
-			pwd2B() {
-				let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+-=])[a-zA-Z\d!@#$%^&*()_+-=]{8,16}$/
-				if (reg.test(this.password2)) {
-					if (this.form.password !== this.password2) {
-						this.pwdMsg2 = '两次密码不一致'
-					} else {
-						this.pwdMsg2 = '密码一致'
-						this.rules.pwd2 = true
-					}
-				} else {
-					this.pwdMsg2 = '密码必须包含三种以上符号，长度8-16位'
-				}
-			},
-			
+			}
 		}
 	}
 </script>
