@@ -8,23 +8,23 @@
       </h3>
       <div class="content">
         <label>手机号:</label>
-        <input type="text" placeholder="请输入你的手机号">
+        <input type="text" v-model="form.phone" placeholder="请输入你的手机号">
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="content">
         <label>验证码:</label>
-        <input type="text" placeholder="请输入验证码">
+        <input type="text" v-model="form.code" placeholder="请输入验证码">
         <img ref="code"  alt="code">
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="content">
         <label>登录密码:</label>
-        <input type="text" placeholder="请输入你的登录密码">
+        <input type="text" v-model="form.password" placeholder="请输入你的登录密码">
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="content">
         <label>确认密码:</label>
-        <input type="text" placeholder="请输入确认密码">
+        <input type="text" v-model="form.password2" placeholder="请输入确认密码">
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="controls">
@@ -58,8 +58,28 @@
 
 <script>
   export default {
-    name: 'Register'
-    
+    name: 'Register',
+    data() {
+      return {
+        form:{
+          phone:'',
+          password:'',
+          password2:'',
+          code:'',
+        }
+      }
+    },
+    mounted(){
+      this.getCode()
+    },
+    methods:{
+      
+      getCode(){
+        this.axios.get('/api/user/passport/sendCode/13117572920').then(res=>{
+          console.log(res)
+        })
+      }
+    }
   }
 </script>
 
