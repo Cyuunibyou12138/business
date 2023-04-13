@@ -30,7 +30,7 @@
 								</label>
 								<span class="forget">忘记密码？</span>
 							</div>
-							<button class="btn">登&nbsp;&nbsp;录</button>
+							<button class="btn" @click.prevent="submit">登&nbsp;&nbsp;录</button>
 						</form>
 
 						<div class="call clearFix">
@@ -65,23 +65,36 @@
 </template>
 
 <script>
+import { mapMutations} from 'vuex'
 	export default {
 		name: 'Login',
 		data() {
 			return {
 				form: {
 					phone: '',
-					password: '',
-					code: ''
+					password: ''
 				}
 			}
 		},
 		methods: {
-			test() {
-				console.log(22222)
-			},
-			test2() {
-				console.log(2)
+			...mapMutations(['changeFlag']),
+			submit() {
+				this.axios({
+					method: 'post',
+					url: '/api/user/passport/login',
+					data: this.form
+				}).then(res => {
+          console.log(res)
+          if(res.code===200){
+            this.$message.success('登录成功')
+            sessionStorage.setItem('token',res.data.token)
+            sessionStorage.setItem('name',res.data.name)
+            this.$router.push('/home')
+						this.changeFlag()
+          }else{
+            this.$message.error(res.message)
+          }
+        })
 			}
 		}
 	}
@@ -158,7 +171,7 @@
 								width: 37px;
 								height: 32px;
 								border: 1px solid #ccc;
-								background: url(../../assets/images/icons.png) no-repeat -10px -201px;
+								background: url('../../assets/images/icons.png') no-repeat -10px -201px;
 								box-sizing: border-box;
 								border-radius: 2px 0 0 2px;
 							}
