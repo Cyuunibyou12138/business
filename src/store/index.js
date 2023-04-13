@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    flag:false
+    flag:false,
   },
   getters: {
     nickName(state) {
@@ -17,10 +17,9 @@ export default new Vuex.Store({
   },
   mutations: {
     changeFlag(state){
-
       state.flag=!state.flag
       console.log(state.flag)
-    }
+    },
   },
   actions: {
   },

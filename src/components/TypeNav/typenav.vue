@@ -56,7 +56,6 @@
 		methods: {
 			getNav() {
 				this.axios.get('/api/product/getBaseCategoryList').then(res => {
-					console.log(JSON.parse(JSON.stringify(res)))
           this.navList = res.data
 				})
 			}
@@ -66,6 +65,7 @@
 
 <style lang="less" scoped>
 	.type-nav {
+		display: none;
 		border-bottom: 2px solid #e1251b;
 		// margin-bottom: 50px;
 		.container {
@@ -100,9 +100,9 @@
 				left: 0;
 				top: 45px;
 				width: 210px;
-				height: 461px;
+				height: auto;
 				position: absolute;
-				background: #fafafa;
+				background: #04f8e4;
 				z-index: 999;
 				
 				.all-sort-list2 {

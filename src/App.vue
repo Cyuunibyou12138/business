@@ -38,8 +38,8 @@
 				</h1>
 				<div class="searchArea">
 					<form action="###" class="searchForm">
-						<input type="text" id="autocomplete" class="input-error input-xxlarge" />
-						<button class="sui-btn btn-xlarge btn-danger" type="button">搜索</button>
+						<input type="text" id="autocomplete" class="input-error input-xxlarge" v-model="txt" placeholder="手机" />
+						<button class="sui-btn btn-xlarge btn-danger" type="button" @click="search">搜索</button>
 					</form>
 				</div>
 			</div>
@@ -48,24 +48,41 @@
 	</div>
 </template>
 <script>
-import {mapGetters,mapMutations} from 'vuex'
+	import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
 			return {
+				txt: ''
 			}
 		},
 		computed: {
 			...mapGetters(['nickName'])
 		},
 		methods: {
+			// 获取登陆状态
 			...mapMutations(['changeFlag']),
+			// 退出登录
 			logout() {
 				sessionStorage.removeItem('token')
 				sessionStorage.removeItem('name')
 				this.changeFlag()
 				this.$router.push('/login')
+			},
+			// 搜索
+			search() {
+				if (this.txt.trim().length === 0) {
+					this.$router.push('/search/手机' )
+				}else{
+					this.$router.push('/search/'+this.txt )
+
+				}
 			}
-		}
+		},
+		watch: {
+			txt(){
+				
+			}
+		},
 	}
 </script>
 <style>

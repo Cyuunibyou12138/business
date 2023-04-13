@@ -134,12 +134,12 @@ export default {
 				prevEl: '.swiper-button-prev',
 			},
 		})
-		mySwiper.el.onmouseover = function () {
-			mySwiper.autoplay.stop()
-		}
-		mySwiper.el.onmouseout = function () {
-			mySwiper.autoplay.start()
-		}
+		// mySwiper.el.onmouseover = function () {
+		// 	mySwiper.autoplay.stop()
+		// }
+		// mySwiper.el.onmouseout = function () {
+		// 	mySwiper.autoplay.start()
+		// }
 	},
 }
 </script>
