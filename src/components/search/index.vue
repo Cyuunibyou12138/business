@@ -27,7 +27,7 @@
 					</ul>
 				</div>
 				<!--selector-->
-				<SearchSelector :attrsList="attrsList" :trademarkList="trademarkList"/>
+				<SearchSelector :attrsList="attrsList" :trademarkList="trademarkList" />
 
 				<!--details-->
 				<div class="details clearfix">
@@ -58,9 +58,9 @@
 					<div class="goods-list">
 						<ul class="yui3-g">
 							<li class="yui3-u-1-5" v-for="item in goodsList" :key="item.id">
-								<div class="list-wrap" >
+								<div class="list-wrap">
 									<div class="p-img">
-										<a href="#" target="_blank"><img :src="item.defaultImg" /></a>
+										<a @click.prevent="$router.push('/detail/' + item.id)" target="_blank"><img :src="item.defaultImg" /></a>
 									</div>
 									<div class="price">
 										<strong>
@@ -70,10 +70,10 @@
 									</div>
 									<div class="attr">
 										<a
+											@click.prevent="$router.push('/detail/' + item.id)"
 											target="_blank"
-											href="item.html"
 											title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】">
-											{{ item.title }}
+											<span v-html="item.title"></span>
 										</a>
 									</div>
 									<div class="commit">
@@ -130,19 +130,19 @@
 	import SearchSelector from './SearchSelector/SearchSelector'
 	export default {
 		name: 'Search',
-    data() {
-      return {
-        attrsList:[],
-        goodsList:[],
-        trademarkList:[]
-      }
-    },
+		data() {
+			return {
+				attrsList: [],
+				goodsList: [],
+				trademarkList: []
+			}
+		},
 		components: {
 			SearchSelector
 		},
-    mounted(){
-      this.getData()
-    },
+		mounted() {
+			this.getData()
+		},
 		watch: {
 			$route() {
 				this.getData()
@@ -151,12 +151,10 @@
 		methods: {
 			getData() {
 				let keyword = this.$route.params.keyword
-				console.log(keyword)
 				this.axios.post('/api/list', { keyword }).then(res => {
-					console.log(JSON.parse(JSON.stringify(res)))
-          this.attrsList = res.data.attrsList
-          this.goodsList = res.data.goodsList
-          this.trademarkList = res.data.trademarkList
+					this.attrsList = res.data.attrsList
+					this.goodsList = res.data.goodsList
+					this.trademarkList = res.data.trademarkList
 				})
 			}
 		}
@@ -306,7 +304,6 @@
 										color: #666;
 
 										img {
-
 											width: 100%;
 											height: auto;
 											vertical-align: middle;

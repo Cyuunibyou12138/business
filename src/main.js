@@ -21,7 +21,6 @@ import axios from 'axios'
 axios.interceptors.request.use(config => {
 	// 获取token
 	var tokenStr = sessionStorage.getItem('token')
-	console.log(tokenStr)
 	config.headers.token = tokenStr//设置响应头
 	return config
 }, err => {

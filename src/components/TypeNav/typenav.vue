@@ -65,15 +65,17 @@
 
 <style lang="less" scoped>
 	.type-nav {
-		display: none;
 		border-bottom: 2px solid #e1251b;
 		// margin-bottom: 50px;
+		
 		.container {
 			width: 1200px;
 			margin: 0 auto;
 			display: flex;
 			position: relative;
-
+			&:hover .sort{
+			display: block;
+		}
 			.all {
 				width: 210px;
 				height: 45px;
@@ -104,7 +106,7 @@
 				position: absolute;
 				background: #04f8e4;
 				z-index: 999;
-				
+				display: none;
 				.all-sort-list2 {
 					.item {
 						h3 {
