@@ -7,28 +7,29 @@
 		<section class="con">
 			<!-- 导航路径区域 -->
 			<div class="conPoin">
-				<span v-for="item in categoryView" :key="item.categoryName">{{item.categoryName}}</span>
+				<span v-for="(item, index) in categoryView" :key="index">{{ item.categoryName }}</span>
 			</div>
 			<!-- 主要内容区域 -->
 			<div class="mainCon">
 				<!-- 左侧放大镜区域 -->
 				<div class="previewWrap">
 					<!--放大镜效果-->
-					<Zoom />
+					<Zoom :skuDefaultImg="skuDefaultImg"/>
 					<!-- 小图列表 -->
-					<ImageList />
+					<ImageList :skuImageList="skuImageList"/>
 				</div>
 				<!-- 右侧选择区域布局 -->
 				<div class="InfoWrap">
 					<div class="goodsDetail">
-						<h3 class="InfoName">Apple iPhone 6s（A1700）64G玫瑰金色 移动通信电信4G手机</h3>
+						<h3 class="InfoName">{{ skuName }}</h3>
+						<h4>{{ skuDesc }}</h4>
 						<p class="news">推荐选择下方[移动优惠购],手机套餐齐搞定,不用换号,每月还有花费返</p>
 						<div class="priceArea">
 							<div class="priceArea1">
 								<div class="title">价&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;格</div>
 								<div class="price">
 									<i>¥</i>
-									<em>5299</em>
+									<em>{{ price*count }}</em>
 									<span>降价通知</span>
 								</div>
 								<div class="remark">
@@ -90,9 +91,9 @@
 						</div>
 						<div class="cartWrap">
 							<div class="controls">
-								<input autocomplete="off" class="itxt" />
-								<a href="javascript:" class="plus">+</a>
-								<a href="javascript:" class="mins">-</a>
+								<input autocomplete="off" class="itxt" v-model.number="count" />
+								<a href="javascript:" @click="count++" class="plus">+</a>
+								<a href="javascript:" @click="count--" class="mins">-</a>
 							</div>
 							<div class="add">
 								<a href="javascript:">加入购物车</a>
@@ -341,7 +342,14 @@
 		name: 'Detail',
 		data() {
 			return {
-				categoryView: []
+				categoryView: [],
+				price: '', //价格
+				skuName: '', //名字
+				skuDesc: '', //描述
+				skuImageList: [], //图片
+				count: '1',
+				skuDefaultImg:''	//默认图片
+
 			}
 		},
 		components: {
@@ -357,15 +365,30 @@
 				this.axios.get('/api/item/' + id).then(res => {
 					console.log(JSON.parse(JSON.stringify(res)))
 					let values = Object.values(res.data.categoryView)
-          values.splice(0,1)
-          values= values.reverse()
-          console.log(values)
-          values.forEach((item,index,arr) => {
-            if(index%2===0){
-              this.categoryView.push({categoryName:item,categoryId:arr[index+1]})
-            }
-          });
+					values.splice(0, 1)
+					values = values.reverse()
+					console.log(values)
+					values.forEach((item, index, arr) => {
+						if (index % 2 === 0) {
+							this.categoryView.push({ categoryName: item, categoryId: arr[index + 1] })
+						}
+					})
+					this.price = res.data.skuInfo.price
+					this.skuName = res.data.skuInfo.skuName
+					this.skuDesc = res.data.skuInfo.skuDesc
+					this.skuImageList = res.data.skuInfo.skuImageList
+					this.skuDefaultImg = res.data.skuInfo.skuDefaultImg
 				})
+			}
+		},
+		watch: {
+			count(newVal) {
+				if (newVal < 1) {
+					this.count = 1
+				}
+				if (newVal % 1 !== 0) {
+					this.count = Math.floor(newVal)
+				}
 			}
 		}
 	}
