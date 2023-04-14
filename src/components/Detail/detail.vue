@@ -14,9 +14,9 @@
 				<!-- 左侧放大镜区域 -->
 				<div class="previewWrap">
 					<!--放大镜效果-->
-					<Zoom :skuDefaultImg="skuDefaultImg"/>
+					<Zoom :skuDefaultImg="skuDefaultImg" />
 					<!-- 小图列表 -->
-					<ImageList :skuImageList="skuImageList"/>
+					<ImageList :skuImageList="skuImageList" />
 				</div>
 				<!-- 右侧选择区域布局 -->
 				<div class="InfoWrap">
@@ -29,7 +29,7 @@
 								<div class="title">价&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;格</div>
 								<div class="price">
 									<i>¥</i>
-									<em>{{ price*count }}</em>
+									<em>{{ price * skuNum }}</em>
 									<span>降价通知</span>
 								</div>
 								<div class="remark">
@@ -64,39 +64,26 @@
 					<div class="choose">
 						<div class="chooseArea">
 							<div class="choosed"></div>
-							<dl>
-								<dt class="title">选择颜色</dt>
-								<dd changepirce="0" class="active">金色</dd>
-								<dd changepirce="40">银色</dd>
-								<dd changepirce="90">黑色</dd>
-							</dl>
-							<dl>
-								<dt class="title">内存容量</dt>
-								<dd changepirce="0" class="active">16G</dd>
-								<dd changepirce="300">64G</dd>
-								<dd changepirce="900">128G</dd>
-								<dd changepirce="1300">256G</dd>
-							</dl>
-							<dl>
-								<dt class="title">选择版本</dt>
-								<dd changepirce="0" class="active">公开版</dd>
-								<dd changepirce="-1000">移动版</dd>
-							</dl>
-							<dl>
-								<dt class="title">购买方式</dt>
-								<dd changepirce="0" class="active">官方标配</dd>
-								<dd changepirce="-240">优惠移动版</dd>
-								<dd changepirce="-390">电信优惠版</dd>
+							<dl v-for="item1 in spuSaleAttrList" :key="item1.id">
+								<dt class="title">选择{{ item1.saleAttrName }}</dt>
+								<dd
+									changepirce="0"
+									:class="{ active: item2.isChecked === '1' }"
+									v-for="(item2, index) in item1.spuSaleAttrValueList"
+									:key="item2.id"
+									@click="active(item2, item1.spuSaleAttrValueList)">
+									{{ item2.saleAttrValueName }}---{{ item2.isChecked  }}
+								</dd>
 							</dl>
 						</div>
 						<div class="cartWrap">
 							<div class="controls">
-								<input autocomplete="off" class="itxt" v-model.number="count" />
-								<a href="javascript:" @click="count++" class="plus">+</a>
-								<a href="javascript:" @click="count--" class="mins">-</a>
+								<input autocomplete="off" class="itxt" v-model.number="skuNum" />
+								<a href="javascript:" @click="skuNum++" class="plus">+</a>
+								<a href="javascript:" @click="skuNum--" class="mins">-</a>
 							</div>
 							<div class="add">
-								<a href="javascript:">加入购物车</a>
+								<router-link :to="'/addcart'" @click="addcart">加入购物车</router-link>
 							</div>
 						</div>
 					</div>
@@ -347,9 +334,10 @@
 				skuName: '', //名字
 				skuDesc: '', //描述
 				skuImageList: [], //图片
-				count: '1',
-				skuDefaultImg:''	//默认图片
-
+				skuNum: '1', //数量
+				skuID: '',
+				skuDefaultImg: '', //默认图片
+				spuSaleAttrList: []
 			}
 		},
 		components: {
@@ -367,28 +355,45 @@
 					let values = Object.values(res.data.categoryView)
 					values.splice(0, 1)
 					values = values.reverse()
-					console.log(values)
 					values.forEach((item, index, arr) => {
 						if (index % 2 === 0) {
 							this.categoryView.push({ categoryName: item, categoryId: arr[index + 1] })
 						}
 					})
+					this.skuID = res.data.skuInfo.id
 					this.price = res.data.skuInfo.price
 					this.skuName = res.data.skuInfo.skuName
 					this.skuDesc = res.data.skuInfo.skuDesc
 					this.skuImageList = res.data.skuInfo.skuImageList
 					this.skuDefaultImg = res.data.skuInfo.skuDefaultImg
-					this.$store.commit('changeImg',this.skuDefaultImg)
+					this.$store.commit('changeImg', this.skuDefaultImg)
+					this.spuSaleAttrList = res.data.spuSaleAttrList
+					
 				})
+			},
+			active(nowData, allData) {
+				allData.forEach(item=>{
+					item.isChecked='0'
+				})
+				nowData.isChecked = '1'
+			},
+			addcart() {
+				let skuinfo = {
+					img: this.skuDefaultImg,
+					name: this.skuName,
+					count: this.skuNum
+				}
+				sessionStorage.setItem('goods', JSON.stringify(skuinfo))
+				
 			}
 		},
 		watch: {
-			count(newVal) {
+			skuNum(newVal) {
 				if (newVal < 1) {
-					this.count = 1
+					this.skuNum = 1
 				}
 				if (newVal % 1 !== 0) {
-					this.count = Math.floor(newVal)
+					this.skuNum = Math.floor(newVal)
 				}
 			}
 		}
