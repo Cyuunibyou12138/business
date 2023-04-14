@@ -38,7 +38,13 @@
 				</h1>
 				<div class="searchArea">
 					<form action="#" class="searchForm">
-						<input type="text" id="autocomplete" @keydown.prevent.enter="search"  class="input-error input-xxlarge" v-model="txt" placeholder="手机" />
+						<input
+							type="text"
+							id="autocomplete"
+							@keydown.prevent.enter="search"
+							class="input-error input-xxlarge"
+							v-model="txt"
+							placeholder="手机" />
 						<button class="sui-btn btn-xlarge btn-danger" type="button" @click.prevent="search">搜索</button>
 					</form>
 				</div>
@@ -52,11 +58,17 @@
 	export default {
 		data() {
 			return {
-				txt: ''
+				txt: '',
 			}
 		},
 		computed: {
-			...mapGetters(['nickName'])
+			...mapGetters(['nickName']),
+			keyword(){
+				if(this.txt.trim().length === 0){
+					return '手机'
+				}
+				return this.txt
+			}
 		},
 		methods: {
 			// 获取登陆状态
@@ -70,14 +82,17 @@
 			},
 			// 搜索
 			search() {
-				if (this.txt.trim().length === 0) {
-					this.$router.push('/search/手机' )
-				}else{
-					this.$router.push('/search/'+this.txt )
-
+				// 判断当前的路由名称是不是search，判断当前页面是不是搜索
+				if (this.$route.name == 'search'&&this.keyword == this.$route.params.keyword) {
+					// 如果文本框中的搜索关键字和路由中的关键字一致的话，则不用响应
+					console.log(this.$route.name,this.keyword,this.$route.params.keyword)
+				} else{
+					this.$router.push('/search/'+this.keyword)
 				}
+				
+				
 			}
-		},
+		}
 	}
 </script>
 <style>

@@ -378,6 +378,7 @@
 					this.skuDesc = res.data.skuInfo.skuDesc
 					this.skuImageList = res.data.skuInfo.skuImageList
 					this.skuDefaultImg = res.data.skuInfo.skuDefaultImg
+					this.$store.commit('changeImg',this.skuDefaultImg)
 				})
 			}
 		},

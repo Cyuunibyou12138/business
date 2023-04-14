@@ -6,6 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     flag:false,
+    url:''
   },
   getters: {
     nickName(state) {
@@ -20,6 +21,9 @@ export default new Vuex.Store({
       state.flag=!state.flag
       console.log(state.flag)
     },
+    changeImg(state,url){
+      state.url=url
+    }
   },
   actions: {
   },

@@ -1,12 +1,12 @@
 <template>
-  <div class="swiper-container">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide"> 
-        <img v-for="item in skuImageList" :key="item.id" :src="item.imgUrl"> 
+  <div class="container">
+    <div class="wrapper">
+      <div class="slide"> 
+        <img v-for="item in skuImageList" :key="item.id" :src="item.imgUrl" @click="changeImg(item.imgUrl)"> 
       </div>
     </div>
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
+    <!-- <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div> -->
   </div>
 </template>
 
@@ -15,20 +15,25 @@
   // import Swiper from 'swiper'
   export default {
     name: "ImageList",
-    props:['skuImageList']
+    props:['skuImageList'],
+    methods:{
+      changeImg(url){
+        this.$store.commit('changeImg',url)
+      },
+      
+    }
   }
 </script>
 
 <style lang="less" scoped>
-  .swiper-container {
+  .container {
     height: 56px;
     width: 412px;
     box-sizing: border-box;
     padding: 0 12px;
-
-    .swiper-slide {
-      width: 56px;
-      height: 56px;
+    .slide {
+      // width: 56px;
+      // height: 56px;
 
       img {
         width: 100%;
@@ -37,7 +42,6 @@
         padding: 2px;
         width: 50px;
         height: 50px;
-        display: block;
 
         &.active {
           border: 2px solid #f60;

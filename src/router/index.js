@@ -13,7 +13,7 @@ const routes = [
   {path:'/register',component:reg},
   {path:'/login',component:login},
   {path:'/home',component:home},
-  {path:'/search/:keyword',component:search,props:true},
+  {path:'/search/:keyword',name:'search' ,component:search,props:true},
   {path:'/detail/:id',component:detail,props:true},
 ]
 
