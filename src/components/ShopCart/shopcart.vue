@@ -1,350 +1,409 @@
 <template>
-  <div class="cart">
-    <h4>全部商品</h4>
-    <div class="cart-main">
-      <div class="cart-th">
-        <div class="cart-th1">全部</div>
-        <div class="cart-th2">商品</div>
-        <div class="cart-th3">单价（元）</div>
-        <div class="cart-th4">数量</div>
-        <div class="cart-th5">小计（元）</div>
-        <div class="cart-th6">操作</div>
-      </div>
-      <div class="cart-body">
-        <ul class="cart-list">
-          <li class="cart-list-con1">
-            <input type="checkbox" name="chk_list">
-          </li>
-          <li class="cart-list-con2">
-            <img src="./images/goods1.png">
-            <div class="item-msg">米家（MIJIA） 小米小白智能摄像机增强版 1080p高清360度全景拍摄AI增强</div>
-          </li>
-          <li class="cart-list-con3">
-            <div class="item-txt">语音升级款</div>
-          </li>
-          <li class="cart-list-con4">
-            <span class="price">399.00</span>
-          </li>
-          <li class="cart-list-con5">
-            <a href="javascript:void(0)" class="mins">-</a>
-            <input autocomplete="off" type="text" value="1" minnum="1" class="itxt">
-            <a href="javascript:void(0)" class="plus">+</a>
-          </li>
-          <li class="cart-list-con6">
-            <span class="sum">399</span>
-          </li>
-          <li class="cart-list-con7">
-            <a href="#none" class="sindelet">删除</a>
-            <br>
-            <a href="#none">移到收藏</a>
-          </li>
-        </ul>
-
-        <ul class="cart-list">
-          <li class="cart-list-con1">
-            <input type="checkbox" name="chk_list" id="" value="">
-          </li>
-          <li class="cart-list-con2">
-            <img src="./images/goods2.png">
-            <div class="item-msg">华为（MIJIA） 华为metaPRO 30 浴霸4摄像 超清晰</div>
-          </li>
-          <li class="cart-list-con3">
-            <div class="item-txt">黑色版本</div>
-          </li>
-          <li class="cart-list-con4">
-            <span class="price">5622.00</span>
-          </li>
-          <li class="cart-list-con5">
-            <a href="javascript:void(0)" class="mins">-</a>
-            <input autocomplete="off" type="text" value="1" minnum="1" class="itxt">
-            <a href="javascript:void(0)" class="plus">+</a>
-          </li>
-          <li class="cart-list-con6">
-            <span class="sum">5622</span>
-          </li>
-          <li class="cart-list-con7">
-            <a href="#none" class="sindelet">删除</a>
-            <br>
-            <a href="#none">移到收藏</a>
-          </li>
-        </ul>
-
-        <ul class="cart-list">
-          <li class="cart-list-con1">
-            <input type="checkbox" name="chk_list" id="" value="">
-          </li>
-          <li class="cart-list-con2">
-            <img src="./images/goods3.png">
-            <div class="item-msg">iphone 11 max PRO 苹果四摄 超清晰 超费电 超及好用</div>
-          </li>
-          <li class="cart-list-con3">
-            <div class="item-txt">墨绿色</div>
-          </li>
-          <li class="cart-list-con4">
-            <span class="price">11399.00</span>
-          </li>
-          <li class="cart-list-con5">
-            <a href="javascript:void(0)" class="mins">-</a>
-            <input autocomplete="off" type="text" value="1" minnum="1" class="itxt">
-            <a href="javascript:void(0)" class="plus">+</a>
-          </li>
-          <li class="cart-list-con6">
-            <span class="sum">11399</span>
-          </li>
-          <li class="cart-list-con7">
-            <a href="#none" class="sindelet">删除</a>
-            <br>
-            <a href="#none">移到收藏</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="cart-tool">
-      <div class="select-all">
-        <input class="chooseAll" type="checkbox">
-        <span>全选</span>
-      </div>
-      <div class="option">
-        <a href="#none">删除选中的商品</a>
-        <a href="#none">移到我的关注</a>
-        <a href="#none">清除下柜商品</a>
-      </div>
-      <div class="money-box">
-        <div class="chosed">已选择
-          <span>0</span>件商品</div>
-        <div class="sumprice">
-          <em>总价（不含运费） ：</em>
-          <i class="summoney">0</i>
-        </div>
-        <div class="sumbtn">
-          <a class="sum-btn" href="###" target="_blank">结算</a>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="cart">
+		<h4>全部商品</h4>
+		<div class="cart-main">
+			<div class="cart-th">
+				<div class="cart-th1">全部</div>
+				<div class="cart-th2">商品</div>
+				<div class="cart-th3">单价（元）</div>
+				<div class="cart-th4">数量</div>
+				<div class="cart-th5">小计（元）</div>
+				<div class="cart-th6">操作</div>
+			</div>
+			<div class="cart-body">
+				<ul class="cart-list" v-for="(cartInfo, index) in cartList" :key="cartInfo.skuId">
+					<li class="cart-list-con1">
+						<input
+							type="checkbox"
+							name="chk_list"
+							:checked="cartInfo.isChecked"
+							v-model="cartInfo.isChecked"
+							@change="changeChecked(cartInfo.skuId, cartInfo.isChecked)" />
+					</li>
+					<li class="cart-list-con2">
+						<img :src="cartInfo.imgUrl" />
+						<div class="item-msg">{{ cartInfo.skuName }}</div>
+					</li>
+					<li class="cart-list-con3">
+						<div class="item-txt">语音升级款</div>
+					</li>
+					<li class="cart-list-con4">
+						<span class="price">{{ cartInfo.skuPrice | buling }}</span>
+					</li>
+					<li class="cart-list-con5">
+						<a href="javascript:;" class="mins" @click="jian(cartInfo.skuId, index)">-</a>
+						<input
+							autocomplete="off"
+							type="text"
+							minnum="1"
+							class="itxt"
+							v-model.number="cartInfo.skuNum"
+							@blur="nownum(cartInfo.skuId, cartInfo.skuNum)"
+							@focus="oldnum = cartInfo.skuNum" />
+						<a href="javascript:;" class="plus" @click="add(cartInfo.skuId, index)">+</a>
+					</li>
+					<li class="cart-list-con6">
+						<span class="sum">{{ cartInfo.skuPrice * cartInfo.skuNum }}</span>
+					</li>
+					<li class="cart-list-con7">
+						<a href="#none" class="sindelet" @click="del(cartInfo.skuId)">删除</a>
+						<br />
+						<a href="#none">移到收藏</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="cart-tool">
+			<div class="select-all">
+				<input class="chooseAll" type="checkbox" v-model="isAll" @click="flag = true" />
+				<span>全选</span>
+			</div>
+			<div class="option">
+				<a href="#none">删除选中的商品</a>
+				<a href="#none">移到我的关注</a>
+				<a href="#none">清除下柜商品</a>
+			</div>
+			<div class="money-box">
+				<div class="chosed">
+					已选择
+					<span>{{ count }}</span>
+					件商品
+				</div>
+				<div class="sumprice">
+					<em>总价（不含运费） ：</em>
+					<i class="summoney">{{ price }}</i>
+				</div>
+				<div class="sumbtn">
+					<a class="sum-btn" href="###" target="_blank">结算</a>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
-  export default {
-    name: 'ShopCart',
-  }
+	export default {
+		name: 'ShopCart',
+		data() {
+			return {
+				cartList: [],
+				count: 0,
+				price: 0,
+				oldnum: 0,
+				// 未点击小选时，全选无法影响
+				flag: false
+			}
+		},
+		mounted() {
+			this.getCartList()
+		},
+		methods: {
+			// 获取购物车列表
+			getCartList() {
+				this.axios.get('/api/cart/cartList').then(res => {
+					this.cartList = res.data[0].cartInfoList
+					console.log(JSON.parse(JSON.stringify(this.cartList)))
+					// 初始化全选按钮
+					console.log(this.flag)
+					if (this.cartList.length) {
+						this.cartList.every(obj => {
+							console.log(obj.isChecked)
+							return obj.isChecked == 1
+						})
+					}
+				})
+			},
+			// 更换选中状态
+			changeChecked(skuId, isChecked) {
+				// this.flag=true
+				isChecked = isChecked ? 1 : 0
+				this.axios.get(`/api/cart/checkCart/${skuId}/${isChecked}`).then(res => {})
+			},
+			// 失去焦点
+			nownum(skuId, nowNum) {
+				console.log(skuId, this.oldnum, nowNum)
+				this.changeNum(skuId, nowNum - this.oldnum)
+			},
+			add(skuId, index) {
+				this.cartList[index].skuNum++
+				this.changeNum(skuId, 1)
+			},
+			jian(skuId, index) {
+				this.cartList[index].skuNum--
+				this.changeNum(skuId, -1)
+			},
+			// 提交修改数量
+			changeNum(skuId, skuNum) {
+				this.axios.post(`/api/cart/addToCart/${skuId}/${skuNum}`).then(res => {})
+			},
+			del(skuId) {
+				this.axios.delete(`/api/cart/deleteCart/${skuId}`).then(res => {
+					console.log(res)
+					this.getCartList()
+				})
+			}
+		},
+		computed: {
+			isAll: {
+				//小选框影响全选框
+				get() {
+					//判断数组里的每一个对象的c属性 它是不是等于true, 就是判断每一个小选框的状态, 只要有一个小选框的状态不为true 就是没有被勾上, 那就返回false , 全选框的状态就是false
+					// every口诀: 查找数组里"不符合"条件, 直接原地返回false
+					if (this.cartList.length) return this.cartList.every(obj => obj.isChecked === true)
+				},
+				//全选影响小选
+				set(val) {
+					//set(val) 设置全选的状态(true/ false)
+					//我们手动设置了全选框的状态,就遍历数组里的每个对象的c属性, 也就是遍历看每个小选框的状态,让它的状态改为 val 全选框的状态
+					if (this.flag) {
+						this.cartList.forEach(obj => (obj.isChecked = val))
+					}
+					console.log(this.isAll)
+				}
+			}
+		},
+		watch: {
+			cartList: {
+				handler(newList, oldList) {
+					let count = 0
+					let price = 0
+					newList.forEach(item => {
+						if (item.skuNum < 1 || isNaN(item.skuNum)) {
+							item.skuNum = 1
+						}
+						if (item.isChecked) {
+							count += item.skuNum
+							price += item.skuPrice * item.skuNum
+						}
+					})
+					this.count = count
+					this.price = price
+				},
+				deep: true
+			}
+		},
+		// 保留两位小数
+		filters: {
+			buling(num) {
+				return num.toFixed(2)
+			}
+		}
+	}
 </script>
 
 <style lang="less" scoped>
-  .cart {
-    width: 1200px;
-    margin: 0 auto;
+	.cart {
+		width: 1200px;
+		margin: 0 auto;
 
-    h4 {
-      margin: 9px 0;
-      font-size: 14px;
-      line-height: 21px;
-    }
+		h4 {
+			margin: 9px 0;
+			font-size: 14px;
+			line-height: 21px;
+		}
 
-    .cart-main {
-      .cart-th {
-        background: #f5f5f5;
-        border: 1px solid #ddd;
-        padding: 10px;
-        overflow: hidden;
+		.cart-main {
+			.cart-th {
+				background: #f5f5f5;
+				border: 1px solid #ddd;
+				padding: 10px;
+				overflow: hidden;
 
-        &>div {
-          float: left;
-        }
+				& > div {
+					float: left;
+				}
 
-        .cart-th1 {
-          width: 25%;
+				.cart-th1 {
+					width: 25%;
 
-          input {
-            vertical-align: middle;
-          }
+					input {
+						vertical-align: middle;
+					}
 
-          span {
-            vertical-align: middle;
-          }
-        }
+					span {
+						vertical-align: middle;
+					}
+				}
 
-        .cart-th2 {
-          width: 25%;
-        }
+				.cart-th2 {
+					width: 25%;
+				}
 
-        .cart-th3,
-        .cart-th4,
-        .cart-th5,
-        .cart-th6 {
-          width: 12.5%;
+				.cart-th3,
+				.cart-th4,
+				.cart-th5,
+				.cart-th6 {
+					width: 12.5%;
+				}
+			}
 
-        }
-      }
+			.cart-body {
+				margin: 15px 0;
+				border: 1px solid #ddd;
 
-      .cart-body {
-        margin: 15px 0;
-        border: 1px solid #ddd;
+				.cart-list {
+					padding: 10px;
+					border-bottom: 1px solid #ddd;
+					overflow: hidden;
 
-        .cart-list {
-          padding: 10px;
-          border-bottom: 1px solid #ddd;
-          overflow: hidden;
+					& > li {
+						float: left;
+					}
 
-          &>li {
-            float: left;
-          }
+					.cart-list-con1 {
+						width: 4.1667%;
+					}
 
-          .cart-list-con1 {
-            width: 4.1667%;
-          }
+					.cart-list-con2 {
+						width: 25%;
 
-          .cart-list-con2 {
-            width: 25%;
+						img {
+							width: 82px;
+							height: 82px;
+							float: left;
+						}
 
-            img {
-              width: 82px;
-              height: 82px;
-              float: left;
-            }
+						.item-msg {
+							float: left;
+							width: 150px;
+							margin: 0 10px;
+							line-height: 18px;
+						}
+					}
 
-            .item-msg {
-              float: left;
-              width: 150px;
-              margin: 0 10px;
-              line-height: 18px;
-            }
-          }
+					.cart-list-con3 {
+						width: 20.8333%;
 
-          .cart-list-con3 {
-            width: 20.8333%;
+						.item-txt {
+							text-align: center;
+						}
+					}
 
-            .item-txt {
-              text-align: center;
-            }
-          }
+					.cart-list-con4 {
+						width: 12.5%;
+					}
 
-          .cart-list-con4 {
-            width: 12.5%;
+					.cart-list-con5 {
+						width: 12.5%;
 
-          }
+						.mins {
+							border: 1px solid #ddd;
+							border-right: 0;
+							float: left;
+							color: #666;
+							width: 6px;
+							text-align: center;
+							padding: 8px;
+						}
 
-          .cart-list-con5 {
-            width: 12.5%;
+						input {
+							border: 1px solid #ddd;
+							width: 40px;
+							height: 33px;
+							float: left;
+							text-align: center;
+							font-size: 14px;
+						}
 
-            .mins {
-              border: 1px solid #ddd;
-              border-right: 0;
-              float: left;
-              color: #666;
-              width: 6px;
-              text-align: center;
-              padding: 8px;
-            }
+						.plus {
+							border: 1px solid #ddd;
+							border-left: 0;
+							float: left;
+							color: #666;
+							width: 6px;
+							text-align: center;
+							padding: 8px;
+						}
+					}
 
-            input {
-              border: 1px solid #ddd;
-              width: 40px;
-              height: 33px;
-              float: left;
-              text-align: center;
-              font-size: 14px;
-            }
+					.cart-list-con6 {
+						width: 12.5%;
 
-            .plus {
-              border: 1px solid #ddd;
-              border-left: 0;
-              float: left;
-              color: #666;
-              width: 6px;
-              text-align: center;
-              padding: 8px;
-            }
-          }
+						.sum {
+							font-size: 16px;
+						}
+					}
 
-          .cart-list-con6 {
-            width: 12.5%;
+					.cart-list-con7 {
+						width: 12.5%;
 
-            .sum {
-              font-size: 16px;
-            }
-          }
+						a {
+							color: #666;
+						}
+					}
+				}
+			}
+		}
 
-          .cart-list-con7 {
-            width: 12.5%;
+		.cart-tool {
+			overflow: hidden;
+			border: 1px solid #ddd;
 
-            a {
-              color: #666;
-            }
-          }
-        }
-      }
-    }
+			.select-all {
+				padding: 10px;
+				overflow: hidden;
+				float: left;
 
-    .cart-tool {
-      overflow: hidden;
-      border: 1px solid #ddd;
+				span {
+					vertical-align: middle;
+				}
 
-      .select-all {
-        padding: 10px;
-        overflow: hidden;
-        float: left;
+				input {
+					vertical-align: middle;
+				}
+			}
 
-        span {
-          vertical-align: middle;
-        }
+			.option {
+				padding: 10px;
+				overflow: hidden;
+				float: left;
 
-        input {
-          vertical-align: middle;
-        }
-      }
+				a {
+					float: left;
+					padding: 0 10px;
+					color: #666;
+				}
+			}
 
-      .option {
-        padding: 10px;
-        overflow: hidden;
-        float: left;
+			.money-box {
+				float: right;
 
-        a {
-          float: left;
-          padding: 0 10px;
-          color: #666;
-        }
-      }
+				.chosed {
+					line-height: 26px;
+					float: left;
+					padding: 0 10px;
+				}
 
-      .money-box {
-        float: right;
+				.sumprice {
+					width: 200px;
+					line-height: 22px;
+					float: left;
+					padding: 0 10px;
 
-        .chosed {
-          line-height: 26px;
-          float: left;
-          padding: 0 10px;
-        }
+					.summoney {
+						color: #c81623;
+						font-size: 16px;
+					}
+				}
 
-        .sumprice {
-          width: 200px;
-          line-height: 22px;
-          float: left;
-          padding: 0 10px;
+				.sumbtn {
+					float: right;
 
-          .summoney {
-            color: #c81623;
-            font-size: 16px;
-          }
-        }
-
-        .sumbtn {
-          float: right;
-
-          a {
-            display: block;
-            position: relative;
-            width: 96px;
-            height: 52px;
-            line-height: 52px;
-            color: #fff;
-            text-align: center;
-            font-size: 18px;
-            font-family: "Microsoft YaHei";
-            background: #e1251b;
-            overflow: hidden;
-          }
-        }
-      }
-    }
-  }
+					a {
+						display: block;
+						position: relative;
+						width: 96px;
+						height: 52px;
+						line-height: 52px;
+						color: #fff;
+						text-align: center;
+						font-size: 18px;
+						font-family: 'Microsoft YaHei';
+						background: #e1251b;
+						overflow: hidden;
+					}
+				}
+			}
+		}
+	}
 </style>

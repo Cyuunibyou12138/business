@@ -7,7 +7,7 @@
 				<div class="container">
 					<div class="loginList">
 						<p>尚品汇欢迎您！</p>
-						<p v-if="$store.state.flag">
+						<p v-if="$store.state.token">
 							{{ nickName }}
 							<a href="###" @click.prevent="logout">退出</a>
 						</p>
@@ -19,7 +19,7 @@
 					</div>
 					<div class="typeList">
 						<a href="###">我的订单</a>
-						<a href="###">我的购物车</a>
+						<router-link :to="'/shopcart'">我的购物车</router-link>
 						<a href="###">我的尚品汇</a>
 						<a href="###">尚品汇会员</a>
 						<a href="###">企业采购</a>
@@ -32,9 +32,9 @@
 			<!--头部第二行 搜索区域-->
 			<div class="bottom">
 				<h1 class="logoArea">
-					<a class="logo" title="尚品汇" href="###" target="_blank">
+					<router-link class="logo" title="尚品汇" :to="'/home'">
 						<img src="./images/logo.png" alt="" />
-					</a>
+					</router-link>
 				</h1>
 				<div class="searchArea">
 					<form action="#" class="searchForm">
@@ -58,39 +58,44 @@
 	export default {
 		data() {
 			return {
-				txt: '',
+				txt: ''
 			}
 		},
 		computed: {
 			...mapGetters(['nickName']),
-			keyword(){
-				if(this.txt.trim().length === 0){
+			keyword() {
+				if (this.txt.trim().length === 0) {
 					return '手机'
 				}
 				return this.txt
 			}
 		},
+		mouted(){
+			if(sessionStorage.getItem('token')){
+				this.changeFlag(true)
+			}
+		},
+		
 		methods: {
 			// 获取登陆状态
-			...mapMutations(['changeFlag']),
+			...mapMutations(['changeFlag','gettoken']),
 			// 退出登录
 			logout() {
 				sessionStorage.removeItem('token')
 				sessionStorage.removeItem('name')
-				this.changeFlag()
+				this.changeFlag(false)
+				this.gettoken(null)
 				this.$router.push('/login')
 			},
 			// 搜索
 			search() {
 				// 判断当前的路由名称是不是search，判断当前页面是不是搜索
-				if (this.$route.name == 'search'&&this.keyword == this.$route.params.keyword) {
+				if (this.$route.name == 'search' && this.keyword == this.$route.params.keyword) {
 					// 如果文本框中的搜索关键字和路由中的关键字一致的话，则不用响应
-					console.log(this.$route.name,this.keyword,this.$route.params.keyword)
-				} else{
-					this.$router.push('/search/'+this.keyword)
+					console.log(this.$route.name, this.keyword, this.$route.params.keyword)
+				} else {
+					this.$router.push('/search/' + this.keyword)
 				}
-				
-				
 			}
 		}
 	}

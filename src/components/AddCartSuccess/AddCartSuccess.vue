@@ -2,7 +2,8 @@
 	<div class="cart-complete-wrap">
 		<div class="cart-complete">
 			<h3>
-				<i class="sui-icon icon-pc-right"></i>
+				<i class="sui-icon icon-pc-right" v-if="isOk"></i>
+				<i class="sui-icon icon-pc-error" v-else></i>
 				商品已成功加入购物车！
 			</h3>
 			<div class="goods">
@@ -16,8 +17,8 @@
 					</div>
 				</div>
 				<div class="right-gocart">
-					<a href="javascript:" class="sui-btn btn-xlarge">查看商品详情</a>
-					<a href="javascript:">去购物车结算 ></a>
+					<a href="javascript:;" class="sui-btn btn-xlarge" @click="$router.push('/detail/' + goods.skuId)">查看商品详情</a>
+					<a href="javascript:;" @click="$router.push('/shopcart')">去购物车结算 ></a>
 				</div>
 			</div>
 		</div>
@@ -29,12 +30,28 @@
 		name: 'AddCartSuccess',
 		data() {
 			return {
-        goods:{}
+        goods:{},
+				isOk:false,
+				msg:''
       }
 		},
 		mounted() {
 			this.goods =JSON.parse(sessionStorage.getItem('goods')) 
       console.log(JSON.parse(JSON.stringify(this.goods)))
+			this.addToCart()
+		},
+		methods:{
+			addToCart(){
+				this.axios.post(`/api/cart/addToCart/${this.goods.skuId}/${this.goods.count}`).then(res=>{
+					console.log(JSON.parse(JSON.stringify(res)))
+					this.isOk = res.ok
+					if(this.isOk){
+						this.msg = '商品已成功加入购物车！'
+					}else{
+						this.msg = '商品加入购物车失败！'
+					}
+				})
+			}
 		}
 	}
 </script>

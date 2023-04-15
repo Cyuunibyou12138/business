@@ -5,24 +5,27 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    flag:false,
-    url:''
+    url:'',
+    token:sessionStorage.getItem('token')
   },
   getters: {
     nickName(state) {
-      if (state.flag) {
+      if (sessionStorage.getItem('token')) {
         return sessionStorage.getItem('name')
       }
       return ''
     }
   },
   mutations: {
-    changeFlag(state){
-      state.flag=!state.flag
+    changeFlag(state,isTrue){
+      state.flag=isTrue
       console.log(state.flag)
     },
     changeImg(state,url){
       state.url=url
+    },
+    gettoken(state, value) {
+      state.token = value
     }
   },
   actions: {

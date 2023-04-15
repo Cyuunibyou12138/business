@@ -72,7 +72,7 @@
 									v-for="(item2, index) in item1.spuSaleAttrValueList"
 									:key="item2.id"
 									@click="active(item2, item1.spuSaleAttrValueList)">
-									{{ item2.saleAttrValueName }}---{{ item2.isChecked  }}
+									{{ item2.saleAttrValueName }}
 								</dd>
 							</dl>
 						</div>
@@ -83,7 +83,7 @@
 								<a href="javascript:" @click="skuNum--" class="mins">-</a>
 							</div>
 							<div class="add">
-								<router-link :to="'/addcart'" @click="addcart">加入购物车</router-link>
+								<a @click="addcart">加入购物车</a>
 							</div>
 						</div>
 					</div>
@@ -368,12 +368,11 @@
 					this.skuDefaultImg = res.data.skuInfo.skuDefaultImg
 					this.$store.commit('changeImg', this.skuDefaultImg)
 					this.spuSaleAttrList = res.data.spuSaleAttrList
-					
 				})
 			},
 			active(nowData, allData) {
-				allData.forEach(item=>{
-					item.isChecked='0'
+				allData.forEach(item => {
+					item.isChecked = '0'
 				})
 				nowData.isChecked = '1'
 			},
@@ -381,10 +380,11 @@
 				let skuinfo = {
 					img: this.skuDefaultImg,
 					name: this.skuName,
-					count: this.skuNum
+					count: this.skuNum,
+					skuId: this.skuID
 				}
 				sessionStorage.setItem('goods', JSON.stringify(skuinfo))
-				
+				this.$router.push('/addcart')
 			}
 		},
 		watch: {

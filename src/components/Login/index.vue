@@ -77,7 +77,7 @@ import { mapMutations} from 'vuex'
 			}
 		},
 		methods: {
-			...mapMutations(['changeFlag']),
+			...mapMutations(['changeFlag','gettoken']),
 			submit() {
 				this.axios({
 					method: 'post',
@@ -88,9 +88,10 @@ import { mapMutations} from 'vuex'
           if(res.code===200){
             this.$message.success('登录成功')
             sessionStorage.setItem('token',res.data.token)
+						this.gettoken( sessionStorage.getItem('token'))
             sessionStorage.setItem('name',res.data.name)
             this.$router.push('/home')
-						this.changeFlag()
+
           }else{
             this.$message.error(res.message)
           }
