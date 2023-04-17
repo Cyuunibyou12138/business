@@ -16,7 +16,6 @@
 						<input
 							type="checkbox"
 							name="chk_list"
-							:checked="cartInfo.isChecked"
 							v-model="cartInfo.isChecked"
 							@change="changeChecked(cartInfo.skuId, cartInfo.isChecked)" />
 					</li>
@@ -55,7 +54,7 @@
 		</div>
 		<div class="cart-tool">
 			<div class="select-all">
-				<input class="chooseAll" type="checkbox" v-model="isAll" @click="flag = true" />
+				<input class="chooseAll" type="checkbox" v-model="isAll" />
 				<span>全选</span>
 			</div>
 			<div class="option">
@@ -74,13 +73,12 @@
 					<i class="summoney">{{ price }}</i>
 				</div>
 				<div class="sumbtn">
-					<a class="sum-btn" href="###" target="_blank">结算</a>
+					<router-link class="sum-btn" :to="'/trade'" >结算</router-link>
 				</div>
 			</div>
 		</div>
 	</div>
 </template>
-
 <script>
 	export default {
 		name: 'ShopCart',
@@ -90,38 +88,27 @@
 				count: 0,
 				price: 0,
 				oldnum: 0,
-				// 未点击小选时，全选无法影响
-				flag: false
 			}
 		},
 		mounted() {
 			this.getCartList()
 		},
 		methods: {
+			// 
 			// 获取购物车列表
 			getCartList() {
 				this.axios.get('/api/cart/cartList').then(res => {
+					console.log(res)
 					this.cartList = res.data[0].cartInfoList
-					console.log(JSON.parse(JSON.stringify(this.cartList)))
-					// 初始化全选按钮
-					console.log(this.flag)
-					if (this.cartList.length) {
-						this.cartList.every(obj => {
-							console.log(obj.isChecked)
-							return obj.isChecked == 1
-						})
-					}
 				})
 			},
 			// 更换选中状态
 			changeChecked(skuId, isChecked) {
-				// this.flag=true
 				isChecked = isChecked ? 1 : 0
 				this.axios.get(`/api/cart/checkCart/${skuId}/${isChecked}`).then(res => {})
 			},
 			// 失去焦点
 			nownum(skuId, nowNum) {
-				console.log(skuId, this.oldnum, nowNum)
 				this.changeNum(skuId, nowNum - this.oldnum)
 			},
 			add(skuId, index) {
@@ -149,16 +136,14 @@
 				get() {
 					//判断数组里的每一个对象的c属性 它是不是等于true, 就是判断每一个小选框的状态, 只要有一个小选框的状态不为true 就是没有被勾上, 那就返回false , 全选框的状态就是false
 					// every口诀: 查找数组里"不符合"条件, 直接原地返回false
-					if (this.cartList.length) return this.cartList.every(obj => obj.isChecked === true)
+
+					if (this.cartList.length) return this.cartList.every(obj => obj.isChecked === true || obj.isChecked === 1)
 				},
 				//全选影响小选
 				set(val) {
 					//set(val) 设置全选的状态(true/ false)
 					//我们手动设置了全选框的状态,就遍历数组里的每个对象的c属性, 也就是遍历看每个小选框的状态,让它的状态改为 val 全选框的状态
-					if (this.flag) {
-						this.cartList.forEach(obj => (obj.isChecked = val))
-					}
-					console.log(this.isAll)
+					this.cartList.forEach(obj => (obj.isChecked = val))
 				}
 			}
 		},
